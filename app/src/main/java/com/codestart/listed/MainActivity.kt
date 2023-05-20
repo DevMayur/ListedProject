@@ -1,7 +1,6 @@
 package com.codestart.listed
 
 import TabTile
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,21 +37,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.codestart.listed.data.api.ApiResponse
-import com.codestart.listed.data.DataPoint
 import com.codestart.listed.ui.components.GraphWithTitleAndDateRange
 import com.codestart.listed.ui.components.RoundCornerCard
 import com.codestart.listed.ui.components.Salutation
 import com.codestart.listed.ui.components.displayLinks
 import com.codestart.listed.ui.theme.ListedTheme
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.android.Android
-import io.ktor.client.features.json.JsonFeature
-import io.ktor.client.features.json.serializer.KotlinxSerializer
-import io.ktor.client.request.get
-import io.ktor.client.request.headers
-import io.ktor.http.HttpHeaders
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,69 +54,17 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    Main()
                 }
             }
         }
     }
 }
 
-suspend fun fetchDashboardData(token: String): ApiResponse {
-    val client = HttpClient(Android) {
-        install(JsonFeature) {
-            serializer = KotlinxSerializer()
-        }
-    }
 
-    val response: ApiResponse = client.get("https://api.inopenapp.com/api/v1/dashboardNew") {
-        headers {
-            append(HttpHeaders.Authorization, "Bearer $token")
-        }
-    }
-
-    client.close()
-
-    return response
-}
-
-fun convertDate(date: String): String {
-    val originalFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
-    val targetFormat = SimpleDateFormat("MMM-yyyy", Locale.ENGLISH)
-    val dateObj = originalFormat.parse(date)
-    return targetFormat.format(dateObj)
-}
-
-fun convertChartData(chartData: Map<String, Int>): List<DataPoint> {
-    // Map to store our monthly data
-    val monthlyData = mutableMapOf<String, Float>()
-
-    for ((key, value) in chartData) {
-        val monthYear = convertDate(key) // This will get the month-year string
-
-        // Add the current value to the existing value for this month/year,
-        // or just add it as a new entry if it doesn't exist yet
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            monthlyData[monthYear] = monthlyData.getOrDefault(monthYear, 0f) + value
-        } else {
-            // If the monthYear key is not in the map, Map.get() will return null,
-            // and the ?: operator will replace that with 0f
-            monthlyData[monthYear] = (monthlyData[monthYear] ?: 0f) + value
-        }
-
-    }
-
-    // Convert our map to a list of DataPoints
-    return monthlyData.map { (date, value) ->
-        DataPoint(date, value)
-    }
-}
-
-
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjU5MjcsImlhdCI6MTY3NDU1MDQ1MH0.dCkW0ox8tbjJA2GgUx2UEwNlbTZ7Rr38PVFJevYcXFI"
+fun Main() {
+    val token =  BuildConfig.TOKEN_KEY;
 
     val dashboardData = produceState<ApiResponse?>(initialValue = null) {
         value = fetchDashboardData(token)
@@ -220,6 +156,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     ListedTheme {
-        Greeting("Android")
+        Main()
     }
 }

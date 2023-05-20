@@ -1,8 +1,17 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     kotlin("plugin.serialization").version("1.6.21")
 }
+
+val apikeyPropertiesFile = rootProject.file("token.properties")
+val apikeyProperties = Properties()
+
+apikeyProperties.load(FileInputStream(apikeyPropertiesFile))
+
 
 android {
     namespace = "com.codestart.listed"
@@ -19,6 +28,9 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildFeatures.buildConfig = true
+        buildConfigField("String", "TOKEN_KEY" , apikeyProperties["TOKEN"].toString())
     }
 
     buildTypes {
