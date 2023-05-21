@@ -1,6 +1,5 @@
 package com.codestart.listed.ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -14,7 +13,7 @@ import androidx.compose.ui.unit.sp
 import java.util.Calendar
 
 @Composable
-fun Salutation( greeting: String , name: String) {
+fun Greet(name: String) {
     Column(
         modifier = Modifier
             .padding(top = 20.dp, start = 20.dp)

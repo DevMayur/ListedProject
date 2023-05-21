@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.sp
 import com.codestart.listed.data.api.ApiResponse
 import com.codestart.listed.ui.components.GraphWithTitleAndDateRange
 import com.codestart.listed.ui.components.RoundCornerCard
-import com.codestart.listed.ui.components.Salutation
+import com.codestart.listed.ui.components.Greet
 import com.codestart.listed.ui.components.displayLinks
 import com.codestart.listed.ui.theme.ListedTheme
 
@@ -125,8 +125,7 @@ fun Main() {
 
             RoundCornerCard {
 
-                Salutation("Good Morning", userName)
-
+                Greet(userName)
 
                 GraphWithTitleAndDateRange(title = "Overview", dateRange = "22 Aug - 23 Sep ", convertedChartData)
                 var selectedTab by remember { mutableStateOf(tabs[0]) }
